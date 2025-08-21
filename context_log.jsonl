@@ -26,3 +26,9 @@
 {"role": "assistant", "text": "Oh, I'm so sorry you had trouble with the audio. Sometimes that happens, dear. Please don't worry! Perhaps we can try something different, or maybe I can help you find the information in another way. Just let me know what you need."}
 {"role": "user", "text": "Could not understand audio"}
 {"role": "assistant", "text": "Oh dear, I understand. Sometimes the sound can be tricky. Don't you worry, it's alright. We can try something different. Perhaps we can read the information together, or maybe I can try to explain it in a simpler way for you. Just let me know what you would like."}
+{"role": "user", "text": "Could not understand audio"}
+{"role": "assistant", "text": "That's alright, dear. Sometimes the audio can be tricky. Don't worry about it. If you'd like, we can try something else, or I can help you find what you're looking for in a different way. Just let me know what you need."}
+{"role": "user", "text": "योग के कई प्रकार बताएं"}
+{"role": "assistant", "text": "योग के कई प्रकार हैं जिनमें हठ योग, राजयोग, कर्मयोग, भक्तियोग, और कुंडलिनी योग शामिल हैं।"}
+{"role": "user", "text": "Could not understand audio"}
+{"role": "assistant", "text": "It seems like we just got started, and I'm happy to chat with you. Is there something on your mind that you'd like to talk about, or perhaps something I can help you with? I'm here to listen and help in any way I can."}
