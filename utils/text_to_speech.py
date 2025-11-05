@@ -1,5 +1,5 @@
 from gtts import gTTS
-import playsound
+# import playsound
 import pygame
 import os
 import time

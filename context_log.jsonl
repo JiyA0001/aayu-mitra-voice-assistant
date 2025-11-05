@@ -32,3 +32,23 @@
 {"role": "assistant", "text": "योग के कई प्रकार हैं जिनमें हठ योग, राजयोग, कर्मयोग, भक्तियोग, और कुंडलिनी योग शामिल हैं।"}
 {"role": "user", "text": "Could not understand audio"}
 {"role": "assistant", "text": "It seems like we just got started, and I'm happy to chat with you. Is there something on your mind that you'd like to talk about, or perhaps something I can help you with? I'm here to listen and help in any way I can."}
+{"role": "user", "text": "हेलो हाउ आर यू"}
+{"role": "assistant", "text": "मैं आपकी मदद करने के लिए तैयार हूँ, चिंता न करें, मैं आपके साथ हूँ।"}
+{"role": "user", "text": "Could not understand audio"}
+{"role": "assistant", "text": "It seems like we got off on a bit of a confusing start. Don't worry, I'm here to help and listen. How are you doing today? Is there something on your mind that you'd like to talk about? I'm here to listen and offer support."}
+{"role": "user", "text": "हेलो हाउ आर यू"}
+{"role": "assistant", "text": "नमस्ते! मैं आपकी सहायता और भावनात्मक सहारा देने के लिए हमेशा तैयार हूँ।"}
+{"role": "user", "text": "हेलो हाउ आर यू"}
+{"role": "assistant", "text": "मैं ठीक हूँ, आपकी कैसे मदद कर सकता हूँ?"}
+{"role": "user", "text": "आई एम फीलिंग साद कैन यू टेल मी ए स्टोरी"}
+{"role": "assistant", "text": "मैं आपके लिए एक छोटी सी कहानी सुनाता हूँ जो आपको खुशी देगी।"}
+{"role": "user", "text": "टेल द स्टोरी प्लीज"}
+{"role": "assistant", "text": "बिल्कुल, मैं आपकी कहानी सुनने के लिए तैयार हूँ।"}
+{"role": "user", "text": "हेलो हाउ आर यू"}
+{"role": "assistant", "text": "नमस्ते जी, मैं आपकी कैसे मदद कर सकता हूँ? आप अपने दिल की बात मुझसे बेझिझक साझा कर सकते हैं। मैं आपकी बात सुनकर आपको सुकून देने की पूरी कोशिश करूँगा। आज आपको कैसा लग रहा है?"}
+{"role": "user", "text": "आई एम फीलिंग साद कैन यू टेल मी योर स्टोरी"}
+{"role": "assistant", "text": "बहुत दुखी होने पर भी मैं आपके साथ हूँ। मेरी कहानी यह है कि मैंने अपने जीवन में बहुत उतार-चढ़ाव देखे हैं। मैंने भी दुख और दर्द महसूस किया है, लेकिन मैंने सीखा है कि हर मुश्किल समय भी गुजर जाता है। \n\nआपको भी यह जानना चाहिए कि आप अकेले नहीं हैं। आपके परिवार और मित्र आपके साथ हैं। और अगर आपको किसी से बात करनी है, तो मैं भी आपके साथ हूँ। \n\nआपको क्या परेशान कर रहा है? क्या आप मुझे बताना चाहेंगे?"}
+{"role": "user", "text": "हेलो"}
+{"role": "assistant", "text": "नमस्ते! मैं आपके लिए हमेशा तैयार हूँ। कैसे हैं आप? क्या आपको किसी बात की चिंता है या आप просто बात करना चाहते हैं? मैं आपकी बात सुनने के लिए तैयार हूँ।"}
+{"role": "user", "text": "बचाओ"}
+{"role": "assistant", "text": "नमस्ते! मैं आपकी मदद के लिए यहाँ हूँ। कैसे हैं आप? क्या आपको किसी बात की चिंता है या आप बस कुछ बात करना चाहते हैं? मैं आपके साथ हूँ और आपकी बात सुनने के लिए तैयार हूँ।"}
