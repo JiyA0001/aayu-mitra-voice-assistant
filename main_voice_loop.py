@@ -76,6 +76,7 @@ import datetime
 import time
 # import winsound
 import traceback
+from collections import deque
 
 from utils.voice_recorder import record_voice
 from utils.transcriber_sr import transcribe_audio_sr
@@ -194,6 +195,11 @@ def main():
         except Exception as e2:
             print("⚠️ fallback reminder thread also failed:", e2)
     speak_text("Hello I am Aayu Mitra. How can I help you today?", lang="en")
+
+
+    # Initialize conversation history (last 5 turns)
+    conversation_history = deque(maxlen=5)
+
     # MAIN interactive loop
     while True:
         try:
@@ -251,7 +257,11 @@ def main():
             tts_lang = 'hi' if detected == 'hi' else 'en'
 
             # LLM reply
-            reply = get_emotional_reply(text, lang=detected, mode=LLM_MODE)
+            reply = get_emotional_reply(text, lang=detected, mode=LLM_MODE, history=list(conversation_history))
+            
+            # Update history
+            conversation_history.append((text, reply))
+            print(f"DEBUG: History updated. Current size: {len(conversation_history)}")
             print("🤖 Assistant:", reply)
 
             # log assistant reply locally
