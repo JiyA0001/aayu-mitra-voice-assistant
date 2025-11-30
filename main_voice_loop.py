@@ -74,7 +74,7 @@
 import threading
 import datetime
 import time
-import winsound
+# import winsound
 import traceback
 
 from utils.voice_recorder import record_voice
@@ -171,10 +171,10 @@ def main():
     # initialize Firestore (will raise helpful errors if credentials / APP_ID missing)
     try:
         firebase.init_db()
-        try:
-            winsound.Beep(1000, 200)   # frequency=1000 Hz, duration=200 ms
-        except:
-            pass
+        # try:
+        #     winsound.Beep(1000, 200)   # frequency=1000 Hz, duration=200 ms
+        # except:
+        #     pass
         print("✅ Firestore initialized (DATA_ROOT =", firebase.DATA_ROOT, ")")
     except Exception as e:
         print("⚠️ Firestore init failed — proceed in local/demo mode. Error:", e)
@@ -193,7 +193,7 @@ def main():
             reminder_thread.start()
         except Exception as e2:
             print("⚠️ fallback reminder thread also failed:", e2)
-
+    speak_text("Hello I am Aayu Mitra. How can I help you today?", lang="en")
     # MAIN interactive loop
     while True:
         try:
