@@ -1,6 +1,7 @@
 serviceAccountKey.json
 sos_log.txt
 context_log.txt
+context_log.jsonl
 
 # Virtual environment
 .venv/

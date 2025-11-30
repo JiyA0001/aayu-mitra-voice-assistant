@@ -74,6 +74,7 @@
 import threading
 import datetime
 import time
+import winsound
 import traceback
 
 from utils.voice_recorder import record_voice
@@ -170,6 +171,10 @@ def main():
     # initialize Firestore (will raise helpful errors if credentials / APP_ID missing)
     try:
         firebase.init_db()
+        try:
+            winsound.Beep(1000, 200)   # frequency=1000 Hz, duration=200 ms
+        except:
+            pass
         print("✅ Firestore initialized (DATA_ROOT =", firebase.DATA_ROOT, ")")
     except Exception as e:
         print("⚠️ Firestore init failed — proceed in local/demo mode. Error:", e)
@@ -192,10 +197,10 @@ def main():
     # MAIN interactive loop
     while True:
         try:
-            cmd = input("\nPress [Enter] to speak or type 'q' to quit: ").strip()
-            if cmd.lower() == 'q':
-                print("Exiting.")
-                break
+            # cmd = input("\nPress [Enter] to speak or type 'q' to quit: ").strip()
+            # if cmd.lower() == 'q':
+            #     print("Exiting.")
+            #     break
 
             # quick in-memory check (backwards compatibility)
             try:
@@ -210,11 +215,11 @@ def main():
 
             # Record
             print("Recording for 6s... speak now.")
-            record_voice(filename="input.wav", duration=6)
+            record_voice(filename="input.wav", duration=10)
 
             # Transcribe (SpeechRecognition - uses selected language as hint)
-            lang_hint = select_language()
-            text = transcribe_audio_sr("input.wav", language=lang_hint)
+            # lang_hint = select_language()
+            text = transcribe_audio_sr("input.wav", language="hi")
             if not text:
                 print("⚠️ No transcription. Try again.")
                 continue
