@@ -7,7 +7,7 @@ from llm.llm_groq import get_groq_reply
 from config import LLM_MODE
 import os
 
-def build_prompt(user_input, lang="hi"):
+def build_prompt(user_input, lang="hi", history=None):
     import json
     import os
 
@@ -32,18 +32,29 @@ def build_prompt(user_input, lang="hi"):
     #     prompt += f"उपयोगकर्ता: {ex['user']}\nसहायक: {ex['assistant']}\n\n" if lang == "hi" \
     #            else f"User: {ex['user']}\nAssistant: {ex['assistant']}\n\n"
 
+    # Add conversation history
+    if history:
+        for prev_user, prev_assistant in history:
+            prompt += f"उपयोगकर्ता: {prev_user}\nसहायक: {prev_assistant}\n\n" if lang == "hi" \
+                   else f"User: {prev_user}\nAssistant: {prev_assistant}\n\n"
+
     prompt += f"उपयोगकर्ता: {user_input}\nसहायक:" if lang == "hi" \
            else f"User: {user_input}\nAssistant:"
+
+    print("\n--- DEBUG: GENERATED PROMPT ---")
+    print(prompt)
+    print("-------------------------------\n")
 
     return prompt
 
 
-def get_emotional_reply(user_text, lang="hi", mode="openai"):
+def get_emotional_reply(user_text, lang="hi", mode="openai", history=None):
     """
     Generates emotional support reply using OpenAI or local LLM.
     :param user_text: User's message (Hindi or English)
     :param lang: Language code ("hi" or "en")
     :param mode: "openai" or "local"
+    :param history: List of tuples [(user, assistant), ...]
     :return: Assistant's text reply
     """
     # Load system prompt
@@ -55,7 +66,7 @@ def get_emotional_reply(user_text, lang="hi", mode="openai"):
         system_prompt = "You are a helpful emotional support assistant."
 
     # Build few-shot prompt
-    prompt = build_prompt(user_text, lang)
+    prompt = build_prompt(user_text, lang, history)
 
     # Add system prompt to the beginning if using local
     # full_prompt = system_prompt + "\n\n" + prompt if mode == "local" else prompt
@@ -64,7 +75,7 @@ def get_emotional_reply(user_text, lang="hi", mode="openai"):
     if mode == "openai":
         return get_reply_openai(prompt)
     elif mode == "groq":
-        return get_groq_reply(system_prompt, user_text)
+        return get_groq_reply(user_text, system_prompt, history)
     # elif mode == "local":
         # return get_reply_local(prompt)
         # return get_reply_local(system_prompt, user_text)
@@ -73,4 +84,3 @@ def get_emotional_reply(user_text, lang="hi", mode="openai"):
 
     else:
         return "⚠️ Invalid mode selected."
-    
