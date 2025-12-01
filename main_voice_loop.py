@@ -238,10 +238,10 @@ def main():
                 pass
 
             # Firestore: log as message (sender Elderly)
-            try:
-                firebase.add_message(PI_ID, "Elderly", text)
-            except Exception as e:
-                print("⚠️ Failed to write message to Firestore:", e)
+            # try:
+            #     firebase.add_message(PI_ID, "Elderly", text)
+            # except Exception as e:
+            #     print("⚠️ Failed to write message to Firestore:", e)
 
             # SOS detection
             if detect_sos(text):
@@ -272,7 +272,7 @@ def main():
 
             # store assistant reply as message in Firestore
             try:
-                firebase.add_message(PI_ID, "Mitara", reply)
+                firebase.add_message(PI_ID, text, reply)
             except Exception as e:
                 print("⚠️ Failed to store assistant message in Firestore:", e)
 

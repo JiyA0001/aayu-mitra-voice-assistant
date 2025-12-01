@@ -9,7 +9,7 @@ def get_reply_openai(prompt):
     try:
         response = openai.ChatCompletion.create(
             # model="gpt-3.5-turbo",  # or "gpt-4"
-            model="gpt-4o",  # or "gpt-4"
+            model="gpt-5.1",  # or "gpt-4"
             messages=[
                 {"role": "user", "content": prompt}
             ],

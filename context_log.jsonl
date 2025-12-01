@@ -68,3 +68,17 @@
 {"role": "assistant", "text": "I'm here to listen and help in any way I can. Take your time, and don't worry if you can't get your thoughts out right away. I'm here to support you, and I'll do my best to understand and help with whatever you need."}
 {"role": "user", "text": "हेलो आई एम फीलिंग वेरी लोनली टुडे सो व्हाट कैन ई दो"}
 {"role": "assistant", "text": "भाई या बहन, मुझे यह जानकर बहुत दुख हुआ कि आप आज अकेलापन महसूस कर रहे हैं। \n\nआपको यह जानना चाहिए कि आप 혼 अकेले नहीं हैं। हम आपके साथ हैं और आपकी बात सुनने के लिए तैयार हैं। \n\nक्या आप अपने दिन के बारे में बात करना चाहेंगे या कुछ और जो आपके मन में है? मैं आपकी बात ध्यान से सुनूंगा और आपको सुकून देने की कोशिश करूंगा।"}
+{"role": "user", "text": "आई एम फीलिंग साद इन स्लोली कैन यू टेल मी ए स्टोरी"}
+{"role": "assistant", "text": "❌ OpenAI Error: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."}
+{"role": "user", "text": "आई एम फीलिंग साद एंड लोनली कैन यू टेल मी ए स्टोरी"}
+{"role": "assistant", "text": "⚠️ Invalid mode selected."}
+{"role": "user", "text": "कैन यू प्लीज टेल मी ए स्टोरी"}
+{"role": "assistant", "text": "⚠️ Invalid mode selected."}
+{"role": "user", "text": "टेल मी ए गुड स्टोरी आई एम बोर्ड"}
+{"role": "user", "text": "अच्छा क्योंकि कैसी है"}
+{"role": "user", "text": "टेल मी ए गुड एंड नाइस स्टोरी"}
+{"role": "assistant", "text": "ज़रूर, मैं आपको एक प्यारी सी कहानी सुनाती हूँ।\n\nएक छोटे से गाँव में, एक बुज़ुर्ग दादी माँ रहती थीं। उनके आँगन में एक नन्हा सा पौधा था जो कुछ मुरझाया हुआ सा था।\n\nदादी माँ हर रोज़ सुबह उस पौधे को प्यार से देखतीं और थोड़ा पानी देतीं। धीरे-धीरे, उनके स्नेह और देखभाल से, वह पौधा फिर से हरा-भरा हो गया।\n\nएक दिन उस पर एक सुंदर-सा फूल खिल गया। दादी माँ उसे देखकर बहुत प्रसन्न हुईं। उस फूल की सुंदरता ने पूरे आँगन को महका दिया।"}
+{"role": "user", "text": "यही कहानी दोबारा सुना दो"}
+{"role": "assistant", "text": "हाँ जी, ज़रूर। आइए, आराम से बैठिए, मैं आपको वही कहानी फिर से सुनाता हूँ।"}
+{"role": "user", "text": "हेलो कैन यू प्लीज टेल मी ए स्टोरी"}
+{"role": "assistant", "text": "प्रणाम! जी, बिलकुल। मैं आपको एक प्यारी सी कहानी सुनाती हूँ।"}

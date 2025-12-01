@@ -153,15 +153,16 @@ def add_alert(pi_id: str, level: str, source: str, message: str):
     return col.add(payload)
 
 # ------------------ messages ------------------
-def add_message(pi_id: str, sender: str, text: str):
-    """
-    sender: 'Mitara', 'Elderly', or 'Caregiver'
+def add_message(pi_id: str, user_input: str, output: str):
+    """ 
+    input: user input
+    output: LLM response
     """
     col = _collection("messages")
     payload = {
         "pi_id": pi_id,
-        "sender": sender,
-        "text": text,
+        "user_input": user_input,
+        "output": output,
         "timestamp": firestore.SERVER_TIMESTAMP
     }
     return col.add(payload)
