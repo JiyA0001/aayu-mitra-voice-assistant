@@ -1,7 +1,7 @@
 import json
 from llm.llm_openai import get_reply_openai
 # from llm.llm_local import get_reply_local
-from llm.llm_gemini import get_gemini_reply
+# from llm.llm_gemini import get_gemini_reply
 from llm.llm_groq import get_groq_reply
 # from llm.emotion_model import build_prompt
 from config import LLM_MODE
@@ -79,8 +79,8 @@ def get_emotional_reply(user_text, lang="hi", mode="openai", history=None):
     # elif mode == "local":
         # return get_reply_local(prompt)
         # return get_reply_local(system_prompt, user_text)
-    elif mode == "gemini":
-        return get_gemini_reply(user_text, system_prompt,history)
+    # elif mode == "gemini":
+    #     return get_gemini_reply(user_text, system_prompt,history)
 
     else:
         return "⚠️ Invalid mode selected."
