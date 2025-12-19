@@ -1,66 +1,46 @@
 from gtts import gTTS
-import os
-import time
 import subprocess
-import threading
+import os
 import uuid
+import platform
 
-tts_lock = threading.Lock()
-pygame_ready = False
+def speak_text(text, lang="en"):
+    base = f"/tmp/reply_{uuid.uuid4().hex}"
+    mp3 = base + ".mp3"
+    wav = base + ".wav"
 
-def _init_pygame():
-    global pygame_ready
-    if pygame_ready:
-        return
     try:
-        import pygame
-        pygame.mixer.init(frequency=48000, buffer=4096)
-        pygame_ready = True
-        print("✅ pygame mixer initialized")
+        tts = gTTS(text=text, lang=lang)
+        tts.save(mp3)
+
+        system = platform.system()
+
+        if system == "Linux":
+            # Convert to wav and play via ALSA
+            subprocess.run(
+                ["ffmpeg", "-y", "-loglevel", "quiet", "-i", mp3, wav],
+                check=True
+            )
+            subprocess.run(
+                ["aplay", "-q", wav],
+                check=True
+            )
+
+        elif system == "Windows":
+            # Simple playback on Windows
+            from playsound import playsound
+            playsound(mp3)
+
+        else:
+            print("Unsupported OS for audio playback")
+
     except Exception as e:
-        print("⚠️ pygame init failed:", e)
-        pygame_ready = False
+        print("TTS ERROR:", e)
 
-def speak_text(text, lang="hi", filename=None):
-    if not filename:
-        filename = f"/tmp/reply_{uuid.uuid4().hex}.mp3"
-
-    with tts_lock:
-        try:
-            tts = gTTS(text=text, lang=lang)
-            tts.save(filename)
-
-            if not os.path.exists(filename) or os.path.getsize(filename) == 0:
-                print("❌ TTS file missing or empty")
-                return
-
-            # Try pygame first
-            _init_pygame()
-            if pygame_ready:
-                try:
-                    import pygame
-                    pygame.mixer.music.load(filename)
-                    pygame.mixer.music.play()
-                    while pygame.mixer.music.get_busy():
-                        time.sleep(0.1)
-                    pygame.mixer.music.unload()
-                    os.remove(filename)
-                    return
-                except Exception as e:
-                    print("⚠️ pygame playback failed:", e)
-
-            # Fallback to mpg123
+    finally:
+        for f in [mp3, wav]:
             try:
-                subprocess.run(
-                    ["mpg123", "-q", filename],
-                    check=True
-                )
-            except Exception as e:
-                print("❌ mpg123 playback failed:", e)
-
-        finally:
-            try:
-                if os.path.exists(filename):
-                    os.remove(filename)
+                if os.path.exists(f):
+                    os.remove(f)
             except:
                 pass
