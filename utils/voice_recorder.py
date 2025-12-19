@@ -2,12 +2,12 @@ import sounddevice as sd
 from scipy.io.wavfile import write
 import os
 
-def record_voice(filename="input.wav", duration=10, fs=44100):
+def record_voice(filename="input.wav", duration=10, fs=48000):
     """
     Records audio from microphone and saves it to a WAV file.
     :param filename: Output WAV file name
     :param duration: Duration of recording in seconds
-    :param fs: Sample rate (44100 is CD quality)
+    :param fs: Sample rate (48000 is standard for many USB mics)
     """
     print(f"🎙️ Recording for {duration} seconds... Speak now!")
     try:
