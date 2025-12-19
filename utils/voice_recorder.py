@@ -11,6 +11,12 @@ def record_voice(filename="input.wav", duration=10, fs=48000):
     """
     print(f"🎙️ Recording for {duration} seconds... Speak now!")
     try:
+        # Optimization: Set defaults to prevent buzzing/gain pumping
+        sd.default.samplerate = fs
+        sd.default.channels = 1
+        sd.default.dtype = 'int16'
+        sd.default.blocksize = 1024
+        
         recording = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='int16')
         sd.wait()  # Wait until recording is finished
         write(filename, fs, recording)
