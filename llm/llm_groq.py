@@ -1,5 +1,6 @@
 import os
-from groq import Groq
+import time
+from groq import Groq, RateLimitError
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
@@ -15,9 +16,22 @@ def get_groq_reply(user_text, system_prompt=None, history=None):
             full_messages.append({"role":"assistant","content":prev_assistant})
     
     full_messages.append({"role":"user","content":user_text})
-    response = client.chat.completions.create(
-        model=os.getenv("LLM_MODEL"),
-        messages=full_messages,
-        max_tokens=200
-    )
-    return response.choices[0].message.content.strip()
+
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model=os.getenv("LLM_MODEL"),
+                messages=full_messages,
+                max_tokens=200
+            )
+            return response.choices[0].message.content.strip()
+        except RateLimitError as e:
+            wait_time = 2 * (attempt + 1)
+            print(f"⚠️ Groq Rate Limit hit. Retrying in {wait_time}s... (Attempt {attempt+1}/{max_retries})")
+            time.sleep(wait_time)
+        except Exception as e:
+            print(f"❌ Groq API Error: {e}")
+            return "I'm having trouble connecting to my brain right now."
+            
+    return "I am currently overloaded. Please try again in a moment."

@@ -13,6 +13,12 @@ def speak_text(text, lang="hi", filename="reply.mp3"):
         tts = gTTS(text=text, lang=lang)
         tts.save(filename)
         
+        # Verify file exists and has content
+        if not os.path.exists(filename) or os.path.getsize(filename) == 0:
+            print("❌ TTS Error: Audio file generation failed (empty or missing).")
+            return
+
+        
         # Try pygame first
         try:
             if not pygame.mixer.get_init():
