@@ -1,4 +1,14 @@
 import sounddevice as sd
+import numpy as np
+import soundfile as sf
+
+# FORCE ALSA MIC DEVICE
+sd.default.hostapi = "ALSA"
+sd.default.device = (2, None)   # input = card 2, output = none
+sd.default.samplerate = 48000
+sd.default.channels = 1
+sd.default.dtype = "int16"
+
 from scipy.io.wavfile import write
 import os
 

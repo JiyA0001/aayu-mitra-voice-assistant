@@ -22,7 +22,7 @@ def speak_text(text, lang="en"):
                 check=True
             )
             subprocess.run(
-                ["aplay", "-q", wav],
+                ["aplay", "-D", "hw:3,0", "-q", wav],
                 check=True
             )
 
