@@ -1,35 +1,36 @@
 import sounddevice as sd
-import numpy as np
 import soundfile as sf
+import numpy as np
 
-# FORCE ALSA MIC DEVICE
-sd.default.hostapi = "ALSA"
-sd.default.device = (2, None)   # input = card 2, output = none
-sd.default.samplerate = 48000
-sd.default.channels = 1
-sd.default.dtype = "int16"
+# ===== HARDWARE CONFIG =====
+# USB Microphone: card 2 (from arecord -l)
+MIC_DEVICE_INDEX = 2
 
-from scipy.io.wavfile import write
-import os
+SAMPLE_RATE = 48000
+CHANNELS = 1
+DTYPE = "int16"
 
-def record_voice(filename="input.wav", duration=10, fs=48000):
+
+def record_voice(filename="input.wav", duration=5):
     """
-    Records audio from microphone and saves it to a WAV file.
-    :param filename: Output WAV file name
-    :param duration: Duration of recording in seconds
-    :param fs: Sample rate (48000 is standard for many USB mics)
+    Records audio from the USB microphone using ALSA only.
+    Safe for Raspberry Pi boot usage.
     """
-    print(f"🎙️ Recording for {duration} seconds... Speak now!")
     try:
-        # Optimization: Set defaults to prevent buzzing/gain pumping
-        sd.default.samplerate = fs
-        sd.default.channels = 1
-        sd.default.dtype = 'int16'
-        sd.default.blocksize = 1024
-        
-        recording = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='int16')
-        sd.wait()  # Wait until recording is finished
-        write(filename, fs, recording)
-        print(f"✅ Voice recorded and saved as '{filename}'")
+        print(f"🎙️ Recording for {duration} seconds... Speak now!")
+
+        audio = sd.rec(
+            frames=int(duration * SAMPLE_RATE),
+            samplerate=SAMPLE_RATE,
+            channels=CHANNELS,
+            dtype=DTYPE,
+            device=MIC_DEVICE_INDEX
+        )
+
+        sd.wait()
+
+        sf.write(filename, audio, SAMPLE_RATE)
+        print("✅ Voice recorded and saved as 'input.wav'")
+
     except Exception as e:
-        print(f"❌ Error while recording: {str(e)}")
+        print("❌ Error while recording:", e)
