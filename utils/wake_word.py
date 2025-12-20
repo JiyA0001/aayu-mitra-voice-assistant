@@ -28,29 +28,31 @@ class WakeWordDetection:
         """
         print("👂 Listening for wake word (Say 'Hey Jarvis')...")
         
-        # We need a streaming callback or a blocking loop
-        # A simple blocking loop with sd.InputStream is easiest for a linear flow
+        # Capture at 48000Hz (Native for many Pi USB mics)
+        # We need chunks of 1280 samples at 16k => 80ms
+        # At 48k, 80ms is 1280 * 3 = 3840 samples
+        NATIVE_RATE = 48000
+        CHUNK_16K = 1280
+        CHUNK_48K = 3840 
         
-        with sd.InputStream(samplerate=self.SAMPLE_RATE, channels=1, dtype='int16', blocksize=self.CHUNK_SIZE) as stream:
+        # Verify downsample factor is integer
+        assert NATIVE_RATE / self.SAMPLE_RATE == 3.0
+        
+        with sd.InputStream(samplerate=NATIVE_RATE, channels=1, dtype='int16', blocksize=CHUNK_48K) as stream:
             while True:
-                # Read audio chunk
-                data, overflowed = stream.read(self.CHUNK_SIZE)
+                # Read audio chunk (3840 samples)
+                data_48k, overflowed = stream.read(CHUNK_48K)
                 
-                # Convert to numpy array if needed (sounddevice returns numpy by default)
-                # openwakeword expects 16-bit PCM (int16) as numpy array or pre-converted float
-                # It handles int16 numpy arrays directly now in many examples, but let's confirm format.
-                # The model.predict receives input audio.
+                # Downsample to 16k (Take every 3rd sample)
+                # Simple decimation works reasonably well for speech if not too much HF noise
+                data_16k = data_48k[::3]
                 
                 # Predict
-                prediction = self.owwModel.predict(data)
+                prediction = self.owwModel.predict(data_16k)
                 
                 # Check results
                 for mdl in self.owwModel.prediction_buffer.keys():
-                    # buffer contains history, but we can just check the latest score
-                    # prediction is a dict: {'hey jarvis': 0.002, ...}
                     score = prediction[mdl]
                     if score > 0.5:
                         print(f"⚡ Wake Word Detected: {mdl} (Score: {score:.2f})")
                         return mdl
-                
-                # small sleep to prevent CPU hogging not needed because stream.read blocks
