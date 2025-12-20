@@ -92,6 +92,7 @@ import utils.aayu_firebase as firebase
 # features (in-memory fallback)
 from features.reminders import check_reminders, reminder_loop
 from features.sos import detect_sos, trigger_emergency_alert
+from utils.wake_word import WakeWordDetection
 
 # ---- simple unicode-based language detector ----
 def detect_language(text: str) -> str:
@@ -181,7 +182,15 @@ def main():
         print("⚠️ Firestore init failed — proceed in local/demo mode. Error:", e)
 
     PI_ID = get_device_id()
+    PI_ID = get_device_id()
     print("Device PI_ID:", PI_ID)
+
+    # Initialize Wake Word
+    try:
+        wake_word_detector = WakeWordDetection()
+    except Exception as e:
+        print("⚠️ Failed to load Wake Word model:", e)
+        wake_word_detector = None
 
     # Start background reminder thread using Firestore (preferred)
     try:
@@ -219,9 +228,14 @@ def main():
             except Exception:
                 pass
 
+
+            # Wake Word Detection
+            wake_word_detector.listen()
+            speak_text("Yes?", lang="en") # Acknowledgement
+
             # Record
             print("Recording for 6s... speak now.")
-            record_voice(filename="input.wav", duration=10)
+            record_voice(filename="input.wav", duration=6)
 
             # Transcribe (SpeechRecognition - uses selected language as hint)
             # lang_hint = select_language()
