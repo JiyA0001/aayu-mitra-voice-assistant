@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, firestore
+from google.cloud.firestore import FieldFilter
 
 load_dotenv()
 
@@ -69,7 +70,7 @@ def add_medication(pi_id: str, medication_payload: dict):
 
 def get_medications(pi_id: str):
     col = _collection("medication")
-    docs = col.where("pi_id", "==", pi_id).stream()
+    docs = col.where(filter=FieldFilter("pi_id", "==", pi_id)).stream()
     return [d.to_dict() for d in docs]
 
 # ------------------ routines ------------------
@@ -89,7 +90,7 @@ def add_routine(pi_id: str, routine_payload: dict):
 
 def get_routines(pi_id: str):
     col = _collection("routines")
-    docs = col.where("pi_id", "==", pi_id).stream()
+    docs = col.where(filter=FieldFilter("pi_id", "==", pi_id)).stream()
     return [d.to_dict() for d in docs]
 
 # ------------------ reminders ------------------
@@ -116,7 +117,7 @@ def get_due_reminders(pi_id: str, time_hhmm: str):
     """
     col = _collection("reminders")
     # Query: pi_id == pi_id AND time == time_hhmm AND completed == False
-    query = col.where("pi_id", "==", pi_id).where("time", "==", time_hhmm).where("completed", "==", False)
+    query = col.where(filter=FieldFilter("pi_id", "==", pi_id)).where(filter=FieldFilter("time", "==", time_hhmm)).where(filter=FieldFilter("completed", "==", False))
     docs = query.stream()
     out = []
     for d in docs:
@@ -135,7 +136,7 @@ def get_upcoming_reminders(pi_id: str):
     Fetch all incomplete reminders for the user.
     """
     col = _collection("reminders")
-    query = col.where("pi_id", "==", pi_id).where("completed", "==", False)
+    query = col.where(filter=FieldFilter("pi_id", "==", pi_id)).where(filter=FieldFilter("completed", "==", False))
     docs = query.stream()
     out = []
     for d in docs:

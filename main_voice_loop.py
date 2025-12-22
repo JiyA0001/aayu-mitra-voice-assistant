@@ -1,3 +1,7 @@
+import warnings
+# Suppress pygame pkg_resources deprecation warning
+warnings.filterwarnings("ignore", category=UserWarning, module="pygame")
+
 # from utils.voice_recorder import record_voice
 # from utils.transcriber_whisper import transcribe_audio_whisper, transcribe_audio_whisper_dynamic
 # from llm.emotion_model import get_emotional_reply
@@ -105,7 +109,15 @@ def select_language():
     choice = input("🗣️ Speak in [1] Hindi or [2] English? (1/2): ")
     return "hi-IN" if choice.strip() == "1" else "en-IN"
 
-# ---- Reminder background loop that polls Firestore ----
+# ---- Fallback / Demo Data ----
+DEMO_PROFILE = {
+    "name": "Smt. Saraswati",
+    "age": 74,
+    "notes": "Hears well with hearing aid, prefers Hindi",
+    "sleep_schedule": {"planned_bedtime": "22:00", "planned_wakeup": "06:00"}
+}
+
+# ---- Firestore-backed reminder query & mark-complete helpers (uses DATA_ROOT from your module) ----
 def db_reminder_loop(pi_id: str, poll_interval: int = 60):
     print(f"🔁 Firestore reminder loop started for {pi_id} (poll {poll_interval}s)")
     while True:
@@ -188,7 +200,7 @@ def main():
             #     pass
 
             # Record
-            print("Recording for 6s... speak now.")
+            # print("Recording for 6s... speak now.")
             record_voice(filename="input.wav", duration=10)
 
             # Transcribe (SpeechRecognition - uses selected language as hint)
@@ -230,13 +242,30 @@ def main():
             # 1. User Profile
             try:
                 prof = firebase.get_user_profile(PI_ID)
+                if not prof:
+                    print("⚠️ Firebase profile missing. Using local demo profile.")
+                    prof = DEMO_PROFILE
+                else:
+                    print("✅ Using User Profile from Firebase")
+
                 if prof:
                     name = prof.get("name", "User")
                     age = prof.get("age", "?")
                     notes = prof.get("notes", "")
                     context_parts.append(f"User Profile: Name={name}, Age={age}, Notes={notes}")
-            except:
-                pass
+                    
+                    # Sleep Schedule from Profile
+                    sleep = prof.get("sleep_schedule", {})
+                    if sleep:
+                        bed = sleep.get("planned_bedtime", "?")
+                        wake = sleep.get("planned_wakeup", "?")
+                        context_parts.append(f"Sleep Routine: Bedtime={bed}, Wakeup={wake}")
+            except Exception as e:
+                print(f"⚠️ Error fetching user profile: {e}. Using local demo profile.")
+                # Fallback on error as well
+                prof = DEMO_PROFILE
+                name = prof.get("name", "User")
+                context_parts.append(f"User Profile (Demo): Name={name}")
 
             # 2. Medications
             try:
@@ -247,7 +276,16 @@ def main():
             except:
                 pass
 
-            # 3. Upcoming Reminders
+            # 3. Daily Routines
+            try:
+                routines = firebase.get_routines(PI_ID)
+                if routines:
+                    rout_list = [f"{r.get('title')} at {r.get('time')} ({','.join(r.get('repeat_days',[]))})" for r in routines]
+                    context_parts.append("Daily Routines: " + "; ".join(rout_list))
+            except Exception as e:
+                print("⚠️ Error fetching routines:", e)
+
+            # 4. Upcoming Reminders
             try:
                 upcoming = firebase.get_upcoming_reminders(PI_ID)
                 if upcoming:
