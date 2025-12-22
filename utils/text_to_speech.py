@@ -16,8 +16,9 @@ def speak_text(text, lang="hi", filename=None):
     Thread-safe: blocks until previous audio finishes.
     """
     # Use a unique filename if none provided to prevent collisions
+    # Use a fixed filename to prevent disk clutter
     if not filename:
-        filename = f"reply_{uuid.uuid4().hex}.mp3"
+        filename = "reply.mp3"
         
     with tts_lock:
         try:
