@@ -90,7 +90,7 @@ from utils.device_id import get_device_id
 import utils.aayu_firebase as firebase
 
 # features (in-memory fallback)
-from features.reminders import check_reminders, reminder_loop
+# from features.reminders import check_reminders, reminder_loop
 from features.sos import detect_sos, trigger_emergency_alert
 
 # ---- simple unicode-based language detector ----
@@ -100,44 +100,10 @@ def detect_language(text: str) -> str:
             return 'hi'
     return 'en'
 
+
 def select_language():
     choice = input("🗣️ Speak in [1] Hindi or [2] English? (1/2): ")
     return "hi-IN" if choice.strip() == "1" else "en-IN"
-
-# ---- Firestore-backed reminder query & mark-complete helpers (uses DATA_ROOT from your module) ----
-def fetch_due_reminders_from_firestore(pi_id: str, now_hhmm: str):
-    """
-    Query reminders in Firestore for this device where time == now_hhmm and not completed.
-    Returns list of dicts with 'id' + fields.
-    """
-    db = firebase.init_db()
-    reminders_path = f"{firebase.DATA_ROOT}/reminders"
-    col_ref = db.collection(reminders_path)
-    # we expect reminders to have fields: pi_id, time (HH:MM), completed (bool) or 'completed'
-    query = col_ref.where("pi_id", "==", pi_id).where("time", "==", now_hhmm).where("completed", "==", False)
-    docs = query.stream()
-    out = []
-    for d in docs:
-        data = d.to_dict()
-        data["id"] = d.id
-        out.append(data)
-    return out
-
-def mark_reminder_completed(pi_id: str, reminder_id: str):
-    db = firebase.init_db()
-    reminders_path = f"{firebase.DATA_ROOT}/reminders"
-    doc_ref = db.collection(reminders_path).document(reminder_id)
-    doc_ref.update({"completed": True, "completed_at": firestore.SERVER_TIMESTAMP} )
-
-# Note: firestore reference is only needed for SERVER_TIMESTAMP; import on demand to avoid circular issues
-from firebase_admin import firestore as _firestore
-firestore = _firestore
-
-def mark_reminder_completed(pi_id: str, reminder_id: str):
-    db = firebase.init_db()
-    reminders_path = f"{firebase.DATA_ROOT}/reminders"
-    doc_ref = db.collection(reminders_path).document(reminder_id)
-    doc_ref.update({"completed": True, "completed_at": firestore.SERVER_TIMESTAMP})
 
 # ---- Reminder background loop that polls Firestore ----
 def db_reminder_loop(pi_id: str, poll_interval: int = 60):
@@ -145,7 +111,8 @@ def db_reminder_loop(pi_id: str, poll_interval: int = 60):
     while True:
         try:
             now = datetime.datetime.now().strftime("%H:%M")
-            due = fetch_due_reminders_from_firestore(pi_id, now)
+            # Use the new utility function
+            due = firebase.get_due_reminders(pi_id, now)
             for r in due:
                 msg = r.get("message") or r.get("label") or "Reminder"
                 print("🔔 DB Reminder:", msg)
@@ -156,7 +123,7 @@ def db_reminder_loop(pi_id: str, poll_interval: int = 60):
                     print("TTS error while speaking reminder:", e)
                 # mark completed so it won't repeat
                 try:
-                    mark_reminder_completed(pi_id, r["id"])
+                    firebase.mark_reminder_completed(pi_id, r["id"])
                 except Exception as e:
                     print("Failed to mark reminder completed:", e)
             time.sleep(poll_interval)
@@ -188,12 +155,13 @@ def main():
         reminder_thread = threading.Thread(target=db_reminder_loop, args=(PI_ID,), daemon=True)
         reminder_thread.start()
     except Exception as e:
-        print("⚠️ Could not start Firestore reminder loop, falling back to in-memory loop if available:", e)
-        try:
-            reminder_thread = threading.Thread(target=reminder_loop, daemon=True)
-            reminder_thread.start()
-        except Exception as e2:
-            print("⚠️ fallback reminder thread also failed:", e2)
+        print("⚠️ Could not start Firestore reminder loop:", e)
+        # Fallback removed as per new requirement to only use Firestore
+        # try:
+        #     reminder_thread = threading.Thread(target=reminder_loop, daemon=True)
+        #     reminder_thread.start()
+        # except Exception as e2:
+        #     print("⚠️ fallback reminder thread also failed:", e2)
     speak_text("Hello I am Aayu Mitra. How can I help you today?", lang="en")
 
 
@@ -209,15 +177,15 @@ def main():
             #     break
 
             # quick in-memory check (backwards compatibility)
-            try:
-                reminder_message = None
-                if 'check_reminders' in globals():
-                    reminder_message = check_reminders()
-                if reminder_message:
-                    print("🔔 Local reminder:", reminder_message)
-                    speak_text(reminder_message)
-            except Exception:
-                pass
+            # try:
+            #     reminder_message = None
+            #     if 'check_reminders' in globals():
+            #         reminder_message = check_reminders()
+            #     if reminder_message:
+            #         print("🔔 Local reminder:", reminder_message)
+            #         speak_text(reminder_message)
+            # except Exception:
+            #     pass
 
             # Record
             print("Recording for 6s... speak now.")
@@ -256,8 +224,46 @@ def main():
             detected = detect_language(text)
             tts_lang = 'hi' if detected == 'hi' else 'en'
 
+            # --- Gather Context from Firebase ---
+            context_parts = []
+            
+            # 1. User Profile
+            try:
+                prof = firebase.get_user_profile(PI_ID)
+                if prof:
+                    name = prof.get("name", "User")
+                    age = prof.get("age", "?")
+                    notes = prof.get("notes", "")
+                    context_parts.append(f"User Profile: Name={name}, Age={age}, Notes={notes}")
+            except:
+                pass
+
+            # 2. Medications
+            try:
+                meds = firebase.get_medications(PI_ID)
+                if meds:
+                    med_list = [f"{m.get('title')} ({m.get('amount')}, {','.join(m.get('time_slots',[]))})" for m in meds]
+                    context_parts.append("Medications: " + "; ".join(med_list))
+            except:
+                pass
+
+            # 3. Upcoming Reminders
+            try:
+                upcoming = firebase.get_upcoming_reminders(PI_ID)
+                if upcoming:
+                    lines = []
+                    for r in upcoming:
+                        t = r.get("time", "??:??")
+                        msg = r.get("message") or r.get("label") or "Reminder"
+                        lines.append(f"- At {t}: {msg}")
+                    context_parts.append("Upcoming Reminders: " + "; ".join(lines))
+            except Exception as e:
+                print("⚠️ Error fetching context reminders:", e)
+
+            extra_context = "\n".join(context_parts)
+
             # LLM reply
-            reply = get_emotional_reply(text, lang=detected, mode=LLM_MODE, history=list(conversation_history))
+            reply = get_emotional_reply(text, lang=detected, mode=LLM_MODE, history=list(conversation_history), extra_context=extra_context)
             
             # Update history
             conversation_history.append((text, reply))

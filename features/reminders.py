@@ -19,10 +19,10 @@ import threading
 from utils.text_to_speech import speak_text  # assuming this uses gTTS and plays audio
 
 # 📝 Simulated reminders (will be replaced by DB in Phase 3)
-reminders = [
-    {"time": "15:37", "message": "दवाई खा लीजिए।"},
-    {"time": "15:40", "message": "सोने का समय हो गया है।"},
-]
+# reminders = [
+#     {"time": "15:37", "message": "दवाई खा लीजिए।"},
+#     {"time": "15:40", "message": "सोने का समय हो गया है।"},
+# ]
 
 def check_reminders():
     now = datetime.datetime.now().strftime("%H:%M")

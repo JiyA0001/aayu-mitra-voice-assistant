@@ -7,7 +7,7 @@ from llm.llm_groq import get_groq_reply
 from config import LLM_MODE
 import os
 
-def build_prompt(user_input, lang="hi", history=None):
+def build_prompt(user_input, lang="hi", history=None, extra_context=None):
     import json
     import os
 
@@ -38,6 +38,10 @@ def build_prompt(user_input, lang="hi", history=None):
             prompt += f"उपयोगकर्ता: {prev_user}\nसहायक: {prev_assistant}\n\n" if lang == "hi" \
                    else f"User: {prev_user}\nAssistant: {prev_assistant}\n\n"
 
+    # Add extra context (reminders, profile, medications)
+    if extra_context:
+        prompt += f"CONTEXT: {extra_context}\n\n"
+
     prompt += f"उपयोगकर्ता: {user_input}\nसहायक:" if lang == "hi" \
            else f"User: {user_input}\nAssistant:"
 
@@ -48,7 +52,7 @@ def build_prompt(user_input, lang="hi", history=None):
     return prompt
 
 
-def get_emotional_reply(user_text, lang="hi", mode="openai", history=None):
+def get_emotional_reply(user_text, lang="hi", mode="openai", history=None, extra_context=None):
     """
     Generates emotional support reply using OpenAI or local LLM.
     :param user_text: User's message (Hindi or English)
@@ -66,7 +70,7 @@ def get_emotional_reply(user_text, lang="hi", mode="openai", history=None):
         system_prompt = "You are a helpful emotional support assistant."
 
     # Build few-shot prompt
-    prompt = build_prompt(user_text, lang, history)
+    prompt = build_prompt(user_text, lang, history, extra_context)
 
     # Add system prompt to the beginning if using local
     # full_prompt = system_prompt + "\n\n" + prompt if mode == "local" else prompt
@@ -75,6 +79,9 @@ def get_emotional_reply(user_text, lang="hi", mode="openai", history=None):
     if mode == "openai":
         return get_reply_openai(prompt)
     elif mode == "groq":
+        # Inject context into system prompt for Groq if available
+        if extra_context:
+            system_prompt += f"\n\nCONTEXT: {extra_context}"
         return get_groq_reply(user_text, system_prompt, history)
     # elif mode == "local":
         # return get_reply_local(prompt)

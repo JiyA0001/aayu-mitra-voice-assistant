@@ -67,6 +67,11 @@ def add_medication(pi_id: str, medication_payload: dict):
     col = _collection("medication")
     return col.add(medication_payload)  # returns (ref, write_time)
 
+def get_medications(pi_id: str):
+    col = _collection("medication")
+    docs = col.where("pi_id", "==", pi_id).stream()
+    return [d.to_dict() for d in docs]
+
 # ------------------ routines ------------------
 def add_routine(pi_id: str, routine_payload: dict):
     """
@@ -81,6 +86,11 @@ def add_routine(pi_id: str, routine_payload: dict):
     """
     col = _collection("routines")
     return col.add(routine_payload)
+
+def get_routines(pi_id: str):
+    col = _collection("routines")
+    docs = col.where("pi_id", "==", pi_id).stream()
+    return [d.to_dict() for d in docs]
 
 # ------------------ reminders ------------------
 def add_reminder(pi_id: str, reminder_payload: dict):
@@ -98,6 +108,41 @@ def add_reminder(pi_id: str, reminder_payload: dict):
     """
     col = _collection("reminders")
     return col.add(reminder_payload)
+
+def get_due_reminders(pi_id: str, time_hhmm: str):
+    """
+    Query reminders in Firestore for this device where time == time_hhmm and not completed.
+    Returns list of dicts with 'id' + fields.
+    """
+    col = _collection("reminders")
+    # Query: pi_id == pi_id AND time == time_hhmm AND completed == False
+    query = col.where("pi_id", "==", pi_id).where("time", "==", time_hhmm).where("completed", "==", False)
+    docs = query.stream()
+    out = []
+    for d in docs:
+        data = d.to_dict()
+        data["id"] = d.id
+        out.append(data)
+    return out
+
+def mark_reminder_completed(pi_id: str, reminder_id: str):
+    col = _collection("reminders")
+    doc_ref = col.document(reminder_id)
+    doc_ref.update({"completed": True, "completed_at": firestore.SERVER_TIMESTAMP})
+
+def get_upcoming_reminders(pi_id: str):
+    """
+    Fetch all incomplete reminders for the user.
+    """
+    col = _collection("reminders")
+    query = col.where("pi_id", "==", pi_id).where("completed", "==", False)
+    docs = query.stream()
+    out = []
+    for d in docs:
+        data = d.to_dict()
+        data["id"] = d.id
+        out.append(data)
+    return out
 
 # ------------------ health_records ------------------
 def add_health_record(pi_id: str, record_payload: dict):
