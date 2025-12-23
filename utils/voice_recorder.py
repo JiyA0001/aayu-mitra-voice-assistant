@@ -6,7 +6,7 @@ sd.default.device = 0   # USB Composite Device
 sd.default.channels = 1
 sd.default.samplerate = 48000
 
-def record_voice(filename="input.wav", duration=10, fs=48000):
+def record_voice(filename="input.wav", duration=6, fs=48000):
     """
     Records audio from microphone and saves it to a WAV file.
     """

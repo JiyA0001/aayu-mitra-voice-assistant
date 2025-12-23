@@ -201,7 +201,7 @@ def main():
 
             # Record
             # print("Recording for 6s... speak now.")
-            record_voice(filename="input.wav", duration=10)
+            record_voice(filename="input.wav", duration=6)
 
             # Transcribe (SpeechRecognition - uses selected language as hint)
             # lang_hint = select_language()
