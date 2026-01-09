@@ -1,66 +1,89 @@
-# 👵 Elderly Emotional Support Voice Assistant
+# 🎤 Aayu Mitra — Voice Assistant (Python)
 
-A beginner-friendly, voice-based AI assistant designed to provide emotional support to elderly users using speech recognition, local or cloud-based LLMs, and text-to-speech synthesis — all integrated in a lightweight, privacy-conscious setup.
-
----
-
-## 📌 Features
-
-- 🎤 **Speech-to-Text** using Google API or Whisper (Hindi + English)
-- 🤖 **LLM Integration** (TinyLLama, Gemma, Phi or GPT-3.5 via API)
-- 💬 **Emotionally sensitive replies** tailored for elderly users
-- 🔊 **Voice output** using `gTTS` in Hindi or English
-- 🌐 Configurable local/cloud support for offline or production use
+**Aayu Mitra** is a voice-powered virtual assistant built using Python that understands voice commands and helps with everyday tasks like telling time, searching the web, opening applications, and answering questions using speech recognition and AI capabilities.
 
 ---
 
-## 🛠️ Tech Stack
+## 🔍 Features
 
-- Python 3.11+
-- gTTS & pygame (TTS)
-- SpeechRecognition / Whisper (STT)
-- Ollama (for local LLMs like Gemma)
-- OpenAI API (optional)
-- sounddevice / scipy (audio handling)
+🚀 Voice command recognition  
+🧠 Contextual intelligence  
+📚 Wikipedia search & information retrieval  
+🌐 Web search using browser  
+⏰ Telling date & time  
+📂 Open local applications  
+🎵 Play music or online videos  
+👋 Friendly and conversational interaction  
 
 ---
 
-## 🚀 How to Run
+## 🛠 Built With
 
+- Python  
+- SpeechRecognition  
+- gTTS  
+- Other Python libraries  
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
 ```bash
-git clone https://github.com/JiyA0001/voice-assistant.git
-cd voice-assistant
-python -m venv .venv
-.\.venv\Scripts\activate
+git clone https://github.com/JiyA0001/aayu-mitra-voice-assistant.git
+cd aayu-mitra-voice-assistant
+```
 
+### 2. Create & activate virtual environment
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
+```bash
 pip install -r requirements.txt
-
-# Run the assistant
-python main_voice_loop.py
 ```
 
-### 🔔 Reminders
+---
 
-- Simulates a working reminder system using a hardcoded list.
-- At every run, the system checks if any reminder matches the current time.
-- If a match is found, the assistant vocalizes it in Hindi using gTTS.
-- Future versions will connect to a database for persistent reminders.
+## 🛠 How It Works
 
-### 🔔 Real-Time Background Reminders
-- The assistant starts a background thread that checks for demo reminders every minute.
-- This runs independently of the user interaction loop.
-- In Phase 3, it will query reminders from a real-time database.
+1. Listens for your voice input  
+2. Converts speech to text  
+3. Processes user command  
+4. Responds using text-to-speech  
 
-### 🧠 Dataset Preparation
+---
 
-To prepare translated and labeled DailyDialog samples:
+## 🧠 Example Commands
 
-```bash
-cd datasets
-python dailydialog_translator.py
+"What time is it?"  
+"Search Wikipedia for Python"  
+"Open YouTube"  
+"Play music"  
+
+---
+
+## 📁 Project Structure
+
+```
+aayu-mitra-voice-assistant/
+├── main.py
+├── requirements.txt
+├── utils/
+├── README.md
 ```
 
-### Fine-Tuning Ready Datasets
+---
 
-- `hindi_emotions_clean.csv`: Cleaned dialogue-emotion pairs (text, label)
-- `hindi_emotions_clean.jsonl`: JSONL format, compatible with LLM fine-tuning (Hugging Face, OpenAI fine-tune APIs, etc.)
+## 💡 Future Enhancements
+
+- AI conversational integration  
+- Weather & news feature  
+- Wake word detection  
+- Desktop app deployment  
+
+---
+
+⭐ If you liked this project, give it a star!
